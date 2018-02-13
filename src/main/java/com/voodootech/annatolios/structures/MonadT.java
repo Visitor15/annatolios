@@ -10,7 +10,11 @@ public abstract class MonadT<A> {
         return block.apply(ref());
     }
 
-    public <B> B map(Function<A, B> block) {
+    public <B, T extends MonadT<B>> T map(Function<A, T> block) {
+        return block.apply(ref());
+    }
+
+    public <B> B mapTo(Function<A, B> block) {
         return block.apply(ref());
     }
 }

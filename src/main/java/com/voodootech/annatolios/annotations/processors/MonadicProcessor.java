@@ -41,7 +41,7 @@ public class MonadicProcessor extends AbstractProcessor {
         return block.apply(ref());
     }
 
-    public <B> B map(Function<A, B> block) {
+    public <B> B mapTo(Function<A, B> block) {
         return block.apply(ref());
     }
      */
@@ -67,7 +67,7 @@ public class MonadicProcessor extends AbstractProcessor {
 //
 //
 //
-//            MethodSpec mapMethod = MethodSpec.methodBuilder("map")
+//            MethodSpec mapMethod = MethodSpec.methodBuilder("mapTo")
 //                    .addModifiers(Modifier.PUBLIC)
 //                    .addTypeVariable(TypeVariableName.get("B", MonadT.class))
 //                    .addParameter()

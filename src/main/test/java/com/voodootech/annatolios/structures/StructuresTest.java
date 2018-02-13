@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ public class StructuresTest {
 
         assert(e0.state().equals(Either.STATE.LEFT));
 
-        Tuple<String, Boolean> res0 = e0.map(e -> {
+        Tuple<String, Boolean> res0 = e0.mapTo(e -> {
             assert(e.isLeft());
             return e.isLeft() ? Tuple.from(e.getLeft(), true) : Tuple.from("ERROR", false);
         });
@@ -29,7 +30,7 @@ public class StructuresTest {
         assert(res1.isRight());
         assert(res1.getRight() == 99);
 
-        Tuple<Either.STATE, String> t1 = res1.map(e -> {
+        Tuple<Either.STATE, String> t1 = res1.mapTo(e -> {
             switch (e.state()) {
                 case LEFT:
                     return Tuple.from(e.state(), e.getLeft());
@@ -59,11 +60,11 @@ public class StructuresTest {
 
         assert(!t0.getA() && !t0.getB());
 
-        Tuple<Boolean, Boolean> t1 = t0.map(t -> Tuple.from(true, true));
+        Tuple<Boolean, Boolean> t1 = t0.mapTo(t -> Tuple.from(true, true));
 
         assert(t1.getA() && t1.getB());
 
-        Integer int0 = t1.map(t -> 500);
+        Integer int0 = t1.mapTo(t -> 500);
 
         assert(int0 == 500);
 
@@ -88,7 +89,7 @@ public class StructuresTest {
 
         assert(c0.ref() == 500);
 
-        Container<String> c1 = c0.map(c -> Container.apply("Hello, world!"));
+        Container<String> c1 = c0.mapTo(c -> Container.apply("Hello, world!"));
 
         assert(c1.ref().equals("Hello, world!"));
 
@@ -96,9 +97,13 @@ public class StructuresTest {
 
         assert(c2.ref().equals("String change!"));
 
-        Integer c3 = c2.flatMap(c -> Container.apply("9000")).map(s -> Integer.valueOf(s));
+        Integer c3 = c2.flatMap(c -> Container.apply("9000")).mapTo(s -> Integer.valueOf(s));
 
         assert(c3 == 9000);
+
+        Container<String> result = c0.map(i -> Container.apply(i.toString()));
+
+        Container<List<String>> result1 = result.map(s -> Container.apply(Arrays.asList(s)));
     }
 
     @Test
@@ -115,7 +120,7 @@ public class StructuresTest {
 
         assert(m1.ref().size() == 5);
 
-        Integer int0 = m1.map(c -> 100);
+        Integer int0 = m1.mapTo(c -> 100);
 
         assert(int0 == 100);
 
