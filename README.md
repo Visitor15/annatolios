@@ -72,7 +72,7 @@ A ```MultiContainer<A>``` is another container-type data structure backed by a `
 
 #### Tuple
 
-A ```Tuple<A, B>``` is analagous to a pair of type A and type B.
+A ```Tuple<A, B>``` is analogous to a pair of type A and type B.
 
 Example
 
