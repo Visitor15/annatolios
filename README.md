@@ -43,7 +43,7 @@ public class SimpleStringMonad extends MonadT<String> {
 }
 ```
 
-A ```SimpleStringMonad``` allows us to wrap a ```String``` and map a function to its value returning any type.
+A ```SimpleStringMonad``` allows us to wrap a ```String``` and map a function to its value, returning any type.
 
 ```java
 SimpleStringMonad simpleMonad   = new SimpleStringMonad("Test string");
@@ -114,7 +114,7 @@ public final class SimpleStringWrapper {
 
 #### Invocable
 
-```Invocable<T extends AbstractContext, E extends Exception>``` is an abstract class allowing inheriting classes to invoke any function with a Try/Catch and recovery hooks.
+```Invocable<T extends AbstractContext, E extends Exception>``` is an abstract class allowing inheriting classes to invoke any function within a Try/Catch block with recovery hooks to gracefully handle an exception.
 
 A class extending Invocable must implements the following abstract methods:
 
@@ -134,7 +134,7 @@ public <A> A invokeWithTryCatch(T c, Function<E, A> errorFunc, Function<T, A> fu
 public <A> A invokeWithTryCatch(Function<E, A> errorFunc, Supplier<A> func)
 ```
 
-Example: ```httpClient.read(...)``` can throw a ```ResourceAccessException```; we want to be able to gracefully handle this and return an empty list as a default value in the case an exception is thrown.
+Example: ```httpClient.read(...)``` can throw a ```ResourceAccessException```; we want to be able to handle this exception and return an empty list as a default value in the case an exception is thrown.
 
 ```java
 List<Data> data     = new ArrayList<>();
