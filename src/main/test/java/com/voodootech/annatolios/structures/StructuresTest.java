@@ -86,15 +86,15 @@ public class StructuresTest {
     public void testContainerMonad() {
         Container<Integer> c0 = Container.apply(500);
 
-        assert(c0.getRef() == 500);
+        assert(c0.ref() == 500);
 
         Container<String> c1 = c0.map(c -> Container.apply("Hello, world!"));
 
-        assert(c1.getRef().equals("Hello, world!"));
+        assert(c1.ref().equals("Hello, world!"));
 
         Container<String> c2 = c1.flatMap(c -> Container.apply("String change!"));
 
-        assert(c2.getRef().equals("String change!"));
+        assert(c2.ref().equals("String change!"));
 
         Integer c3 = c2.flatMap(c -> Container.apply("9000")).map(s -> Integer.valueOf(s));
 
@@ -105,7 +105,7 @@ public class StructuresTest {
     public void testMultiContainerMonad() {
         MultiContainer<Integer> m0 = MultiContainer.apply(0, 1, 2, 3, 4);
 
-        assert(m0.getRef().size() == 5);
+        assert(m0.ref().size() == 5);
 
         Integer totalVal = m0.reduce(0, (i, acc) -> acc + i);
 
@@ -113,7 +113,7 @@ public class StructuresTest {
 
         MultiContainer<String> m1 = MultiContainer.apply("0", "1", "2", "3", "4");
 
-        assert(m1.getRef().size() == 5);
+        assert(m1.ref().size() == 5);
 
         Integer int0 = m1.map(c -> 100);
 
