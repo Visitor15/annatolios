@@ -8,7 +8,7 @@ A convenience library.
 
 #### Monad Transformer
 
-Extending the ```MonadT<A>``` abstract class adds ```map``` and ```flatMap``` functionality.
+Extending the ```MonadT<A>``` abstract class adds ```map```, ```mapTo```, and ```flatMap``` functionality.
 
 ```java
 public abstract class MonadT<A> {
@@ -19,7 +19,11 @@ public abstract class MonadT<A> {
         return block.apply(ref());
     }
 
-    public <B> B map(Function<A, B> block) {
+    public <B, T extends MonadT<B>> T map(Function<A, T> block) {
+        return block.apply(ref());
+    }
+
+    public <B> B mapTo(Function<A, B> block) {
         return block.apply(ref());
     }
 }
@@ -47,7 +51,8 @@ A ```SimpleStringMonad``` allows us to wrap a ```String``` and map a function to
 
 ```java
 SimpleStringMonad simpleMonad   = new SimpleStringMonad("Test string");
-Integer result                  = simpleMonad.map((string) -> 666);
+Integer result                  = simpleMonad.mapTo(string -> 666);
+Container<String>               = simpleMonad.map(string -> Container.apply(string));
 ```
 
 #### Container
@@ -78,7 +83,7 @@ Integer argA = tuple.getA();
 String  argB = tuple.getB();
 ```
 
-```Tuple``` is backed by ```MonadT<Tuple<A, B>>``` allowing you to ```map``` and ```flatMap``` on a tuple object.
+```Tuple``` is backed by ```MonadT<Tuple<A, B>>``` allowing you to ```map```, ```mapTo```, and ```flatMap``` on a tuple object.
 
 #### Either
 
