@@ -70,6 +70,8 @@ Container<Integer> integerContainer = Container.apply(500);
 
 A ```MultiContainer<A>``` is another container-type data structure backed by a ```Container<List<A>>```. Using a ```MultiContainer<A>``` gives the ability to ```reduce```, ```fold```, and ```mapMulti```.
 
+```mapMulti``` allows you to map a function to each element in the MultiContainer instead of the list of elements as a whole.
+
 #### Tuple
 
 A ```Tuple<A, B>``` is analogous to a pair of type A and type B.
@@ -87,7 +89,7 @@ String  argB = tuple.getB();
 
 #### Either
 
-An ```Either<A, B>``` is an _or_ data type backed by a ```MonadT<Either<A, B>``` of either type ```A``` _or_ type ```B```; never both. It can be thought of as the opposite of a ```Tuple<A, B>```. In
+An ```Either<A, B>``` is an _or_ data type backed by a ```MonadT<Either<A, B>>``` of either type ```A``` _or_ type ```B```; never both. It can be thought of as the opposite of a ```Tuple<A, B>```. In
 addition to being a ```MonadT```, an ```Either``` can optional map on either its left or right side returning an ```Optional<T>``` in both cases.
 
 Example
