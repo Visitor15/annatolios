@@ -47,7 +47,7 @@ public class SimpleStringMonad extends MonadT<String> {
 }
 ```
 
-A ```SimpleStringMonad``` allows us to wrap a ```String``` and map a function to its value, returning any type.
+A ```SimpleStringMonad``` allows us to wrap a ```String``` and map a function to its value.
 
 ```java
 SimpleStringMonad simpleMonad   = new SimpleStringMonad("Test string");
