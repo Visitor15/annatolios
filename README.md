@@ -145,7 +145,7 @@ Tuple<List<Error>, List<Data>> result = MultiContainer.apply(SERVICE_1, SERVICE_
         acc.getA().add(handleResourceAccessException(e));
         return new ArrayList<Data>();
     }, (context, service) -> assembler.assemble(httpClient.read(context, service)));
-    // Adding Health Profile facts from response to tuple
+    // Adding data from http response to tuple
     acc.getB().addAll(serviceResponse);
     return acc;
 }));
