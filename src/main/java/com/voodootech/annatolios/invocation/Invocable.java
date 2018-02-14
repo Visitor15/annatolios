@@ -7,30 +7,30 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface Invocable<T extends AbstractContext, E extends Exception> {
+public interface Invocable<CONTEXT extends AbstractContext, ERROR extends Exception> {
 
-    E buildErrorEntity(final String errorMessage);
+    ERROR buildErrorEntity(final String errorMessage);
 
-    <A extends Exception> E buildErrorEntity(final A exception);
+    <A extends Exception> ERROR buildErrorEntity(final A exception);
 
-    default <A, B> B invokeWithTryCatch(T c, A a, Function<E, B> errorFunc, BiFunction<T, A, B> func) {
+    default <A, B> B invokeWithTryCatch(CONTEXT c, A a, Function<ERROR, B> errorFunc, BiFunction<CONTEXT, A, B> func) {
         return invokeWithTryCatchInternal(c, Optional.ofNullable(a), Optional.of(func), Optional.empty(), Optional.empty(), errorFunc);
     }
 
-    default <A> A invokeWithTryCatch(T c, Function<E, A> errorFunc, Function<T, A> func) {
+    default <A> A invokeWithTryCatch(CONTEXT c, Function<ERROR, A> errorFunc, Function<CONTEXT, A> func) {
         return invokeWithTryCatchInternal(c, Optional.empty(), Optional.empty(), Optional.of(func), Optional.empty(), errorFunc);
     }
 
-    default <A> A invokeWithTryCatch(Function<E, A> errorFunc, Supplier<A> func) {
+    default <A> A invokeWithTryCatch(Function<ERROR, A> errorFunc, Supplier<A> func) {
         return invokeWithTryCatchInternal(AbstractContext.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(func), errorFunc);
     }
 
     default <A, B> B invokeWithTryCatchInternal(AbstractContext c,
                                                 Optional<A> optA,
-                                                Optional<BiFunction<T, A, B>> biFunc,
-                                                Optional<Function<T, B>> func,
+                                                Optional<BiFunction<CONTEXT, A, B>> biFunc,
+                                                Optional<Function<CONTEXT, B>> func,
                                                 Optional<Supplier<B>> supplierFunc,
-                                                Function<E, B> errorFunc) {
+                                                Function<ERROR, B> errorFunc) {
         boolean optBiFunc       = biFunc.isPresent();
         boolean optFunc         = func.isPresent();
         boolean optSupplierFunc = supplierFunc.isPresent();
@@ -48,9 +48,9 @@ public interface Invocable<T extends AbstractContext, E extends Exception> {
 
         try {
             if(optBiFunc) {
-                return biFunc.get().apply((T) c, optA.get()); // TODO - don't cast
+                return biFunc.get().apply((CONTEXT) c, optA.get()); // TODO - don't cast
             } else if(optFunc) {
-                return func.get().apply((T) c); // TODO - don't cast
+                return func.get().apply((CONTEXT) c); // TODO - don't cast
             } else {
                 return supplierFunc.get().get();
             }
