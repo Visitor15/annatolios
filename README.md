@@ -97,7 +97,7 @@ Example
 ```java
 Either<String, Integer> either = Either.asLeft("abc");
 
-Either.State state  = either.state();    // Should equal Either.State.LEFT
+Either.State state  = either.state();   // Should equal Either.State.LEFT
 boolean isLeft      = either.isLeft();  // Should equal true
 boolean isRight     = either.isRight(); // Should equal false
 
