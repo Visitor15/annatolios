@@ -57,7 +57,7 @@ Container<String>               = simpleMonad.map(string -> Container.apply(stri
 
 #### Container
 
-A ```Container<A>``` is a built-in data structure that allows us to wrap any type ```A``` in a monad transformer. A static convenience method ```public static final <A> Container<A> apply(A a)``` is available to construct a ```Container```.
+A ```Container<A>``` wraps any type ```A``` in a monad transformer. A static method ```public static final <A> Container<A> apply(A a)``` is available to construct a ```Container```.
 
 Example
 
@@ -68,7 +68,7 @@ Container<Integer> integerContainer = Container.apply(500);
 
 #### MultiContainer  
 
-A ```MultiContainer<A>``` is another container-type data structure backed by a ```Container<List<A>>```. Using a ```MultiContainer<A>``` gives the ability to ```reduce```, ```fold```, and ```mapMulti```.
+A ```MultiContainer<A>``` is backed by a ```Container<List<A>>```. Using a ```MultiContainer<A>``` gives the ability to ```reduce```, ```fold```, and ```mapMulti```.
 
 ```mapMulti``` allows you to map a function to each element in the MultiContainer instead of the list of elements as a whole.
 
@@ -89,8 +89,8 @@ String  argB = tuple.getB();
 
 #### Either
 
-An ```Either<A, B>``` is an _or_ data type backed by a ```MonadT<Either<A, B>>``` of either type ```A``` _or_ type ```B```; never both. It can be thought of as the opposite of a ```Tuple<A, B>```. In
-addition to being a ```MonadT```, an ```Either``` can optional map on either its left or right side returning an ```Optional<T>``` in both cases.
+An ```Either<A, B>```, backed by a ```MonadT<Either<A, B>>```, is of either type ```A``` _or_ type ```B```; never both. In
+addition to being a ```MonadT```, an ```Either``` can optionally map on either its left or right side returning an ```Optional<T>``` in both cases.
 
 Example
 
@@ -121,9 +121,9 @@ public final class SimpleStringWrapper {
 
 #### Invocable
 
-```Invocable<T extends AbstractContext, E extends Exception>``` is an abstract class allowing inheriting classes to invoke any function within a Try/Catch block with recovery hooks to gracefully handle an exception.
+```Invocable<T extends AbstractContext, E extends Exception>``` is an abstract class allowing inheriting classes to invoke any function within a Try/Catch block with recovery hooks to handle exceptions. 
 
-A class extending Invocable must implements the following abstract methods:
+A class extending Invocable must implement:
 
 ```java
 protected abstract E buildErrorEntity(final String errorMessage);
@@ -131,7 +131,7 @@ protected abstract E buildErrorEntity(final String errorMessage);
 protected abstract <A extends Exception> E buildErrorEntity(final A exception);
 ```
 
-Once Invocable is inherited, the subclass has the following methods available for use:
+Provided methods:
 
 ```java
 public <A, B> B invokeWithTryCatch(T c, A a, Function<E, B> errorFunc, BiFunction<T, A, B> func)
