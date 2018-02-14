@@ -3,7 +3,7 @@ package com.voodootech.annatolios.structures;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class Either<A, B> extends MonadT<Either<A, B>> {
+public class Either<A, B> implements MonadT<Either<A, B>> {
 
     public enum STATE {
         LEFT,

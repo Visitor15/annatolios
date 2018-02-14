@@ -1,18 +1,37 @@
 package com.voodootech.annatolios.structures;
 
+import com.voodootech.annatolios.common.AbstractContext;
+import com.voodootech.annatolios.fixtures.SimpleDataProviderFixture;
+import com.voodootech.annatolios.fixtures.SimpleUserFixture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-@RunWith(Parameterized.class)
+@RunWith(value = Parameterized.class)
 public class StructuresTest {
+
+    @Parameterized.Parameter
+    public int defaultValue;
+
+    @Parameterized.Parameters(name = "{index}: testDataStructure - {0}")
+    public static Collection<Object[]> data() {
+        return new ArrayList<Object[]>() {{ add(new Object[] { 1 }); add(new Object[] { 2 }); }};
+    }
+
+    @Test
+    public void testIOContainer() {
+        IOContainer<SimpleUserFixture.SimpleUser> c0 = IOContainer.apply(SimpleDataProviderFixture.newInstance(), new AbstractContext(UUID.randomUUID().toString()));
+        Optional<String> optString = c0.mapTo(user -> user.map(u -> u.getId()));
+
+        assert(optString.isPresent());
+        assert(optString.get().equals(c0.ref().get().getId()));
+    }
 
     @Test
     public void testEitherMonad() {
+        int val = defaultValue;
         Either<String, Integer> e0 = Either.asLeft("Hello");
 
         assert(e0.state().equals(Either.STATE.LEFT));

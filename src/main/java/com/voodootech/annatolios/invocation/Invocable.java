@@ -7,25 +7,25 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class Invocable<T extends AbstractContext, E extends Exception> {
+public interface Invocable<T extends AbstractContext, E extends Exception> {
 
-    protected abstract E buildErrorEntity(final String errorMessage);
+    E buildErrorEntity(final String errorMessage);
 
-    protected abstract <A extends Exception> E buildErrorEntity(final A exception);
+    <A extends Exception> E buildErrorEntity(final A exception);
 
-    public <A, B> B invokeWithTryCatch(T c, A a, Function<E, B> errorFunc, BiFunction<T, A, B> func) {
+    default <A, B> B invokeWithTryCatch(T c, A a, Function<E, B> errorFunc, BiFunction<T, A, B> func) {
         return invokeWithTryCatchInternal(c, Optional.ofNullable(a), Optional.of(func), Optional.empty(), Optional.empty(), errorFunc);
     }
 
-    public <A> A invokeWithTryCatch(T c, Function<E, A> errorFunc, Function<T, A> func) {
+    default <A> A invokeWithTryCatch(T c, Function<E, A> errorFunc, Function<T, A> func) {
         return invokeWithTryCatchInternal(c, Optional.empty(), Optional.empty(), Optional.of(func), Optional.empty(), errorFunc);
     }
 
-    public <A> A invokeWithTryCatch(Function<E, A> errorFunc, Supplier<A> func) {
+    default <A> A invokeWithTryCatch(Function<E, A> errorFunc, Supplier<A> func) {
         return invokeWithTryCatchInternal(AbstractContext.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(func), errorFunc);
     }
 
-    private <A, B> B invokeWithTryCatchInternal(AbstractContext c,
+    default <A, B> B invokeWithTryCatchInternal(AbstractContext c,
                                                 Optional<A> optA,
                                                 Optional<BiFunction<T, A, B>> biFunc,
                                                 Optional<Function<T, B>> func,

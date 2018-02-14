@@ -1,6 +1,6 @@
 package com.voodootech.annatolios.structures;
 
-public class Container<A> extends MonadT<A> {
+public class Container<A> implements MonadT<A> {
 
     private final A ref;
 
