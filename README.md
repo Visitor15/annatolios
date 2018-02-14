@@ -174,14 +174,14 @@ public final class SimpleStringWrapper {
 
 #### Invocable
 
-```Invocable<T extends AbstractContext, E extends Exception>``` is an abstract class allowing inheriting classes to invoke any function within a Try/Catch block with recovery hooks to handle exceptions. 
+```Invocable<T extends AbstractContext, E extends Exception>``` is an interface allowing classes to invoke a function within a Try/Catch block with recovery hooks to handle exceptions. 
 
-A class extending Invocable must implement:
+A class implementing Invocable must implement:
 
 ```java
-protected abstract E buildErrorEntity(final String errorMessage);
+public E buildErrorEntity(final String errorMessage);
 
-protected abstract <A extends Exception> E buildErrorEntity(final A exception);
+public <A extends Exception> E buildErrorEntity(final A exception);
 ```
 
 Provided methods:
