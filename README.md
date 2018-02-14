@@ -8,22 +8,22 @@ A convenience library.
 
 #### Monad Transformer
 
-Extending the ```MonadT<A>``` abstract class adds ```map```, ```mapTo```, and ```flatMap``` functionality.
+Implementing the ```MonadT<A>``` interface adds ```map```, ```mapTo```, and ```flatMap``` default functionality.
 
 ```java
-public abstract class MonadT<A> {
+public interface MonadT<A> {
 
-    public abstract A ref();
+    A ref();
 
-    public <B extends MonadT<A>> B flatMap(Function<A, B> block) {
+    default <B extends MonadT<A>> B flatMap(Function<A, B> block) {
         return block.apply(ref());
     }
 
-    public <B, T extends MonadT<B>> T map(Function<A, T> block) {
+    default <B, T extends MonadT<B>> T map(Function<A, T> block) {
         return block.apply(ref());
     }
 
-    public <B> B mapTo(Function<A, B> block) {
+    default <B> B mapTo(Function<A, B> block) {
         return block.apply(ref());
     }
 }
@@ -32,7 +32,7 @@ public abstract class MonadT<A> {
 Example
 
 ```java
-public class SimpleStringMonad extends MonadT<String> {
+public class SimpleStringMonad implements MonadT<String> {
 
     private final String ref;
 
@@ -71,6 +71,59 @@ Container<Integer> integerContainer = Container.apply(500);
 A ```MultiContainer<A>``` is backed by a ```Container<List<A>>```. Using a ```MultiContainer<A>``` gives the ability to ```reduce```, ```fold```, and ```mapMulti```.
 
 ```mapMulti``` allows you to map a function to each element in the MultiContainer instead of the list of elements as a whole.
+
+#### IOContainer
+
+An ```IOContainer<A>``` implements a ```MonadT<Optional<A>>``` and  and required an instance of a ```DataProvider<A>``` and ```AbstractContext``` to construct.
+
+Once constructed, an ```IOContainer``` can resolve its reference to data by using its ```DataProvider```. Implementing a ```MonadT<Optional<A>>``` also gives us the ability to map on interesting data - for example, remote data requiring a http ```GET``` request, or persisted data requiring a DB query.
+
+Example
+
+```java
+IOContainer<SimpleUser> c0 = IOContainer.apply(new SimpleDataProvider(), new AbstractContext(UUID.randomUUID().toString()));
+Optional<String> optString = c0.mapTo(user -> user.map(u -> u.getId()));    // Extracting the user ID
+
+assert(optString.isPresent())                           // Should be true
+assert(optString.get().equals(c0.ref().get().getId())); // Should be true
+```
+
+```java
+public final class SimpleUser {
+    private final String id;
+
+    public SimpleUser(final String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+}
+
+
+public final class SimpleDataProvider implements DataProvider<SimpleUser> {
+
+    @Override
+    public SimpleUser provide(AbstractContext c) {
+        return retrieve(c).ref();
+    }
+
+    @Override
+    public Exception buildErrorEntity(String errorMessage) {
+        return new RuntimeException(errorMessage);
+    }
+
+    @Override
+    public <A extends Exception> Exception buildErrorEntity(A exception) {
+        return exception;
+    }
+
+    private Container<SimpleUser> retrieve(AbstractContext c) {
+        return Container.apply(SimpleUserFixture.newInstance(c.getId()));
+    }
+}
+```
 
 #### Tuple
 
