@@ -6,7 +6,8 @@ A convenience library.
 
 ### Data structures
 
-#### Monad Transformer
+###### Monad Transformer
+
 
 Implementing the ```MonadT<A>``` interface adds ```map```, ```mapTo```, and ```flatMap``` default functionality.
 
@@ -66,13 +67,13 @@ Container<Integer> integerContainer = Container.apply(500);
 
 ```
 
-#### MultiContainer  
+###### MultiContainer  
 
 A ```MultiContainer<A>``` is backed by a ```Container<List<A>>```. Using a ```MultiContainer<A>``` gives the ability to ```reduce```, ```fold```, and ```mapMulti```.
 
 ```mapMulti``` allows you to map a function to each element in the MultiContainer instead of the list of elements as a whole.
 
-#### IOContainer
+###### IOContainer
 
 An ```IOContainer<A>``` implements a ```MonadT<Optional<A>>``` and requires an instance of a ```DataProvider<A>``` and ```AbstractContext``` to construct.
 
@@ -125,7 +126,7 @@ public final class SimpleDataProvider implements DataProvider<SimpleUser> {
 }
 ```
 
-#### Tuple
+###### Tuple
 
 A ```Tuple<A, B>``` is analogous to a pair of type A and type B.
 
@@ -140,7 +141,7 @@ String  argB = tuple.getB();
 
 ```Tuple``` is backed by ```MonadT<Tuple<A, B>>``` allowing you to ```map```, ```mapTo```, and ```flatMap``` on a tuple object.
 
-#### Either
+###### Either
 
 An ```Either<A, B>```, backed by a ```MonadT<Either<A, B>>```, is of either type ```A``` _or_ type ```B```; never both. In
 addition to being a ```MonadT```, an ```Either``` can optionally map on either its left or right side returning an ```Optional<T>``` in both cases.
@@ -172,7 +173,7 @@ public final class SimpleStringWrapper {
 ```
 ### Behavior
 
-#### Invocable
+###### Invocable
 
 ```Invocable<T extends AbstractContext, E extends Exception>``` is an interface allowing classes to invoke a function within a Try/Catch block with recovery hooks to handle exceptions. 
 
