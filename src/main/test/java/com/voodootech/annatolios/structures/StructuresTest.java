@@ -67,8 +67,25 @@ public class StructuresTest {
 
         assert(resultE != null);
         assert(resultE.state().equals(Either.STATE.LEFT));
-        assert(resultE.state().equals(Either.STATE.LEFT));
         assert(resultE.getLeft() != null);
+
+        IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> c4 = IOContainer.apply(SimpleDataProviderFixture.newMockedDataProvider());
+
+        IOContainer<SimpleDataProviderFixture.SimpleContext, Optional<SimpleUserFixture.SimpleUser>> r = c4.map(new SimpleDataProviderFixture.SimpleContext("bad_user_id", "", "", "bad_email@email.com"), either -> Optional.ofNullable(either.isRight() ? either.getRight() : null));
+
+        Either<Exception, Optional<SimpleUserFixture.SimpleUser>> resultE2 = r.ref();
+
+        assert(resultE2 != null);
+        assert(resultE2.state().equals(Either.STATE.LEFT));
+        assert(resultE2.getLeft() != null);
+
+        IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> r2 = c4.map(new SimpleDataProviderFixture.SimpleContext("123", "FIRST_NAME", "LAST_NAME", "testuser1@email.com"), either -> either.getRight());
+
+        Either<Exception, SimpleUserFixture.SimpleUser> resultE3 = r2.ref();
+
+        assert(resultE3 != null);
+        assert(resultE3.state().equals(Either.STATE.RIGHT));
+        assert(resultE3.getRight() != null);
     }
 
     @Test
