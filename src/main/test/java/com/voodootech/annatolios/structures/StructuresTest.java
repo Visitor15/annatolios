@@ -22,17 +22,31 @@ public class StructuresTest {
 
     @Test
     public void testIOContainer() {
-        IOContainer<SimpleUserFixture.SimpleUser> c0 = IOContainer.apply(SimpleDataProviderFixture.newInstance(), new AbstractContext(UUID.randomUUID().toString()));
+        IOContainer<AbstractContext, SimpleUserFixture.SimpleUser> c0 = IOContainer.apply(SimpleDataProviderFixture.newInstance(), new AbstractContext(UUID.randomUUID().toString()));
         String userId = c0.mapTo(userE -> userE.getRight().getId());
 
         assert(userId.equals(c0.ref().getRight().getId()));
 
-        IOContainer<SimpleUserFixture.SimpleUser> c1 = IOContainer.apply(SimpleDataProviderFixture.newExplodingInstance(), new AbstractContext(UUID.randomUUID().toString()));
+        IOContainer<AbstractContext, SimpleUserFixture.SimpleUser> c1 = IOContainer.apply(SimpleDataProviderFixture.newExplodingInstance(), new AbstractContext(UUID.randomUUID().toString()));
 
         Either<Exception, SimpleUserFixture.SimpleUser> optUser = c1.ref();
 
         assert(optUser.isLeft());
         assert(optUser.state().equals(Either.STATE.LEFT));
+
+        IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> c2 = IOContainer.apply(SimpleDataProviderFixture.newMockedDataProvider(), new SimpleDataProviderFixture.SimpleContext("123", "FIRST_NAME", "LAST_NAME", "testuser1@email.com"));
+
+        SimpleUserFixture.SimpleUser user = c2.mapTo(u -> u.getRight());
+
+        assert(user != null);
+        assert(user.getId().equals("123"));
+        assert(user.getEmail().equals("testuser1@email.com"));
+
+        Either<Exception, SimpleUserFixture.SimpleUser> resultE = c2.ref(new SimpleDataProviderFixture.SimpleContext("bad_user_id", "", "", "bad_email@email.com"));
+
+        assert(resultE.isLeft());
+        assert(resultE.state().equals(Either.STATE.LEFT));
+        assert(resultE.getLeft() != null);
     }
 
     @Test
