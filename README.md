@@ -75,9 +75,9 @@ A ```MultiContainer<A>``` is backed by a ```Container<List<A>>```. Using a ```Mu
 
 #### [IOContainer](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/IOContainer.java)
 
-An ```IOContainer<A>``` implements a ```MonadT<Optional<A>>``` and requires an instance of a ```DataProvider<A>``` and ```AbstractContext``` to construct.
+An ```IOContainer<A>``` uses an instance of a ```DataProvider<A>``` and ```AbstractContext``` to resolve a reference to some entity ```A```. 
 
-Once constructed, an ```IOContainer``` can resolve its reference to data by using its ```DataProvider```. Implementing a ```MonadT<Optional<A>>``` also gives us the ability to map on interesting data - for example, remote data requiring a http request, or persisted data requiring a DB query.
+Once constructed, an ```IOContainer``` can resolve its reference to data by using its ```DataProvider```; giving us the ability to operate on interesting data - for example, remote data requiring a http request, or persisted data requiring a DB query.
 
 ###### Example
 
