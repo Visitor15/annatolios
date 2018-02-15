@@ -54,7 +54,7 @@ public class IOContainer<CONTEXT extends AbstractContext, A> extends Container<E
         return super.flatMap(block);
     }
 
-    public <B> IOContainer<CONTEXT, B> map(CONTEXT c, Function<Either<Exception, A>, B> block) {
+    public IOContainer<CONTEXT, A> map(CONTEXT c, Function<Either<Exception, A>, A> block) {
         this.context = c;
         return new IOContainer(this.dataProvider, this.context, super.mapTo(block));
     }

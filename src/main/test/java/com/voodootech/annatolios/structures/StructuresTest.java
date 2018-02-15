@@ -71,9 +71,9 @@ public class StructuresTest {
 
         IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> c4 = IOContainer.apply(SimpleDataProviderFixture.newMockedDataProvider());
 
-        IOContainer<SimpleDataProviderFixture.SimpleContext, Optional<SimpleUserFixture.SimpleUser>> r = c4.map(new SimpleDataProviderFixture.SimpleContext("bad_user_id", "", "", "bad_email@email.com"), either -> Optional.ofNullable(either.isRight() ? either.getRight() : null));
+        IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> r = c4.map(new SimpleDataProviderFixture.SimpleContext("bad_user_id", "", "", "bad_email@email.com"), either -> either.isRight() ? either.getRight() : null);
 
-        Either<Exception, Optional<SimpleUserFixture.SimpleUser>> resultE2 = r.ref();
+        Either<Exception, SimpleUserFixture.SimpleUser> resultE2 = r.ref();
 
         assert(resultE2 != null);
         assert(resultE2.state().equals(Either.STATE.LEFT));
