@@ -23,10 +23,16 @@ public class StructuresTest {
     @Test
     public void testIOContainer() {
         IOContainer<SimpleUserFixture.SimpleUser> c0 = IOContainer.apply(SimpleDataProviderFixture.newInstance(), new AbstractContext(UUID.randomUUID().toString()));
-        Optional<String> optString = c0.mapTo(user -> user.map(u -> u.getId()));
+        String userId = c0.mapTo(userE -> userE.getRight().getId());
 
-        assert(optString.isPresent());
-        assert(optString.get().equals(c0.ref().get().getId()));
+        assert(userId.equals(c0.ref().getRight().getId()));
+
+        IOContainer<SimpleUserFixture.SimpleUser> c1 = IOContainer.apply(SimpleDataProviderFixture.newExplodingInstance(), new AbstractContext(UUID.randomUUID().toString()));
+
+        Either<Exception, SimpleUserFixture.SimpleUser> optUser = c1.ref();
+
+        assert(optUser.isLeft());
+        assert(optUser.state().equals(Either.STATE.LEFT));
     }
 
     @Test

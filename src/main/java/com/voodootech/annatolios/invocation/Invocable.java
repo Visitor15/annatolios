@@ -1,6 +1,7 @@
 package com.voodootech.annatolios.invocation;
 
 import com.voodootech.annatolios.common.AbstractContext;
+import com.voodootech.annatolios.structures.Either;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -23,6 +24,10 @@ public interface Invocable<CONTEXT extends AbstractContext, ERROR extends Except
 
     default <A> A invokeWithTryCatch(Function<ERROR, A> errorFunc, Supplier<A> func) {
         return invokeWithTryCatchInternal(AbstractContext.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(func), errorFunc);
+    }
+
+    default <A> Either<Exception, A> invoke(CONTEXT c, Function<CONTEXT, A> func) {
+        return invokeWithTryCatchInternal(c, Optional.empty(), Optional.empty(), Optional.of((f) -> Either.asRight(func.apply(c))), Optional.empty(), (e) -> Either.asLeft(e));
     }
 
     default <A, B> B invokeWithTryCatchInternal(AbstractContext c,

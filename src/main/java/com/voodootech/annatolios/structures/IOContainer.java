@@ -3,9 +3,7 @@ package com.voodootech.annatolios.structures;
 import com.voodootech.annatolios.common.AbstractContext;
 import com.voodootech.annatolios.providers.DataProvider;
 
-import java.util.Optional;
-
-public class IOContainer<A> implements MonadT<Optional<A>> {
+public class IOContainer<A> implements MonadT<Either<Exception, A>> {
 
     private final DataProvider<A> dataProvider;
     private final AbstractContext context;
@@ -16,8 +14,8 @@ public class IOContainer<A> implements MonadT<Optional<A>> {
     }
 
     @Override
-    public Optional<A> ref() {
-        return Optional.ofNullable(dataProvider.provide(this.context));
+    public Either<Exception, A> ref() {
+        return dataProvider.provide(context);
     }
 
     public static final <A> IOContainer<A> apply(DataProvider<A> dataProvider, AbstractContext context) {
