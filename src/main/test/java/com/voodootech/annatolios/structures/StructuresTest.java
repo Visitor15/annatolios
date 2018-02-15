@@ -52,21 +52,23 @@ public class StructuresTest {
 
         Optional<SimpleUserFixture.SimpleUser> optUser = c3.mapTo(r -> {
             switch (r.state()) {
-
                 case LEFT:
-                    assert (true);
                     return Optional.<SimpleUserFixture.SimpleUser>empty();
                 case RIGHT:
-                    assert (false);
-                    break;
-                default:
                     throw new IllegalArgumentException("Illegal state");
             }
-
             return Optional.ofNullable(r.getRight());
         });
 
         assert(!optUser.isPresent());
+
+        resultE = null;
+        resultE = c3.ref();
+
+        assert(resultE != null);
+        assert(resultE.state().equals(Either.STATE.LEFT));
+        assert(resultE.state().equals(Either.STATE.LEFT));
+        assert(resultE.getLeft() != null);
     }
 
     @Test
