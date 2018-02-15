@@ -29,10 +29,10 @@ public class StructuresTest {
 
         IOContainer<AbstractContext, SimpleUserFixture.SimpleUser> c1 = IOContainer.apply(SimpleDataProviderFixture.newExplodingInstance(), new AbstractContext(UUID.randomUUID().toString()));
 
-        Either<Exception, SimpleUserFixture.SimpleUser> optUser = c1.ref();
+        Either<Exception, SimpleUserFixture.SimpleUser> optUserE = c1.ref();
 
-        assert(optUser.isLeft());
-        assert(optUser.state().equals(Either.STATE.LEFT));
+        assert(optUserE.isLeft());
+        assert(optUserE.state().equals(Either.STATE.LEFT));
 
         IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> c2 = IOContainer.apply(SimpleDataProviderFixture.newMockedDataProvider(), new SimpleDataProviderFixture.SimpleContext("123", "FIRST_NAME", "LAST_NAME", "testuser1@email.com"));
 
@@ -47,6 +47,26 @@ public class StructuresTest {
         assert(resultE.isLeft());
         assert(resultE.state().equals(Either.STATE.LEFT));
         assert(resultE.getLeft() != null);
+
+        IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> c3 = IOContainer.apply(SimpleDataProviderFixture.newMockedDataProvider(), new SimpleDataProviderFixture.SimpleContext("bad_user_id", "", "", "bad_email@email.com"));
+
+        Optional<SimpleUserFixture.SimpleUser> optUser = c3.mapTo(r -> {
+            switch (r.state()) {
+
+                case LEFT:
+                    assert (true);
+                    return Optional.<SimpleUserFixture.SimpleUser>empty();
+                case RIGHT:
+                    assert (false);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Illegal state");
+            }
+
+            return Optional.ofNullable(r.getRight());
+        });
+
+        assert(!optUser.isPresent());
     }
 
     @Test
