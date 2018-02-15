@@ -71,7 +71,7 @@ public class StructuresTest {
 
         IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> c4 = IOContainer.apply(SimpleDataProviderFixture.newMockedDataProvider());
 
-        IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> r = c4.map(new SimpleDataProviderFixture.SimpleContext("bad_user_id", "", "", "bad_email@email.com"), either -> either.isRight() ? either.getRight() : null);
+        IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> r = c4.flatMap(new SimpleDataProviderFixture.SimpleContext("bad_user_id", "", "", "bad_email@email.com"), either -> either.isRight() ? either.getRight() : null);
 
         Either<Exception, SimpleUserFixture.SimpleUser> resultE2 = r.ref();
 
@@ -79,7 +79,7 @@ public class StructuresTest {
         assert(resultE2.state().equals(Either.STATE.LEFT));
         assert(resultE2.getLeft() != null);
 
-        IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> r2 = c4.map(new SimpleDataProviderFixture.SimpleContext("123", "FIRST_NAME", "LAST_NAME", "testuser1@email.com"), either -> either.getRight());
+        IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> r2 = c4.flatMap(new SimpleDataProviderFixture.SimpleContext("123", "FIRST_NAME", "LAST_NAME", "testuser1@email.com"), either -> either.getRight());
 
         Either<Exception, SimpleUserFixture.SimpleUser> resultE3 = r2.ref();
 

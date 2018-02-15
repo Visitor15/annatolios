@@ -6,65 +6,59 @@ import com.voodootech.annatolios.providers.DataProvider;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class IOContainer<CONTEXT extends AbstractContext, A> extends Container<Either<Exception, A>> {
+public class IOContainer<CONTEXT extends AbstractContext, A> {
+
+    private Either<Exception, A> ref;
 
     private final DataProvider<CONTEXT, A> dataProvider;
     private CONTEXT context;
 
     public IOContainer(final DataProvider<CONTEXT, A> dataProvider, final CONTEXT context, final A entity) {
-        super(Either.asRight(entity));
+        ref = (entity != null ? Either.asRight(entity) : Either.asLeft(new IllegalArgumentException("Entity is null")));
         this.dataProvider   = dataProvider;
         this.context        = context;
     }
 
     public IOContainer(final DataProvider<CONTEXT, A> dataProvider, final CONTEXT context) {
-        super(Either.asLeft(new RuntimeException("No entity")));
+        ref = null;
         this.dataProvider   = dataProvider;
         this.context        = context;
     }
 
     public IOContainer(final DataProvider<CONTEXT, A> dataProvider) {
-        super(Either.asLeft(new RuntimeException("No entity")));
+        ref = null;
         this.dataProvider   = dataProvider;
         this.context        = null;
     }
 
-    @Override
     public Either<Exception, A> ref() {
-        return checkContext().map(e ->Either.<Exception, A>asLeft(e)).orElse(dataProvider.provide(context));
+        Optional<Either<Exception, A>> contextCheck = checkContext().map(e -> Either.<Exception, A>asLeft(e));
+        if(ref == null && contextCheck.isPresent()) {
+            return contextCheck.get();
+        }
+        else if (ref == null) {
+            ref = dataProvider.provide(context);
+        }
+        return ref;
     }
 
-    @Override
-    public <B extends MonadT<Either<Exception, A>>> B flatMap(Function<Either<Exception, A>, B> block) {
-        return checkContext().map(e -> block.apply(Either.asLeft(e))).orElse(super.flatMap(block));
-    }
-
-    @Override
-    public <B, T extends MonadT<B>> T map(Function<Either<Exception, A>, T> block) {
-        return checkContext().map(e -> block.apply(Either.asLeft(e))).orElse(super.map(block));
-    }
-
-    @Override
     public <B> B mapTo(Function<Either<Exception, A>, B> block) {
-        return checkContext().map(e -> block.apply(Either.asLeft(e))).orElse(super.mapTo(block));
+        return checkContext().map(e -> block.apply(Either.asLeft(e))).orElse(block.apply(ref()));
     }
 
-    public <B extends MonadT<Either<Exception, A>>> B flatMap(CONTEXT c, Function<Either<Exception, A>, B> block) {
-        this.context = c;
-        return super.flatMap(block);
-    }
-
-    public IOContainer<CONTEXT, A> map(CONTEXT c, Function<Either<Exception, A>, A> block) {
-        this.context = c;
-        return new IOContainer(this.dataProvider, this.context, super.mapTo(block));
+    public IOContainer<CONTEXT, A> flatMap(CONTEXT c, Function<Either<Exception, A>, A> block) {
+        this.ref        = null;
+        this.context    = c;
+        return new IOContainer(this.dataProvider, this.context, block.apply(ref()));
     }
 
     public <B> B mapTo(CONTEXT c, Function<Either<Exception, A>, B> block) {
         this.context = c;
-        return super.mapTo(block);
+        return block.apply(ref());
     }
 
     public Either<Exception, A> ref(final CONTEXT context) {
+        this.ref = null;
         return dataProvider.provide(context);
     }
 
