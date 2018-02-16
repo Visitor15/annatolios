@@ -8,10 +8,10 @@ import java.util.function.Function;
 
 public class IOContainer<CONTEXT extends AbstractContext, A> {
 
-    private Either<Exception, A> ref;
-
     private final DataProvider<CONTEXT, A> dataProvider;
-    private CONTEXT context;
+
+    private Either<Exception, A>    ref;
+    private CONTEXT                 context;
 
     public IOContainer(final DataProvider<CONTEXT, A> dataProvider, final CONTEXT context, final A entity) {
         ref = (entity != null ? Either.asRight(entity) : Either.asLeft(new IllegalArgumentException("Entity is null")));
@@ -20,26 +20,19 @@ public class IOContainer<CONTEXT extends AbstractContext, A> {
     }
 
     public IOContainer(final DataProvider<CONTEXT, A> dataProvider, final CONTEXT context) {
-        ref = null;
+        ref                 = null;
         this.dataProvider   = dataProvider;
         this.context        = context;
     }
 
     public IOContainer(final DataProvider<CONTEXT, A> dataProvider) {
-        ref = null;
+        ref                 = null;
         this.dataProvider   = dataProvider;
         this.context        = null;
     }
 
     public Either<Exception, A> ref() {
-        Optional<Either<Exception, A>> contextCheck = checkContext().map(e -> Either.<Exception, A>asLeft(e));
-        if(ref == null && contextCheck.isPresent()) {
-            return contextCheck.get();
-        }
-        else if (ref == null) {
-            ref = dataProvider.provide(context);
-        }
-        return ref;
+        return getRefInternal();
     }
 
     public <B> B mapTo(Function<Either<Exception, A>, B> block) {
@@ -60,6 +53,12 @@ public class IOContainer<CONTEXT extends AbstractContext, A> {
     public Either<Exception, A> ref(final CONTEXT context) {
         this.ref = null;
         return dataProvider.provide(context);
+    }
+
+    private Either<Exception, A> getRefInternal() {
+        Optional<Either<Exception, A>> contextCheck = checkContext().map(e -> Either.<Exception, A>asLeft(e));
+        ref = ((ref == null && contextCheck.isPresent())) ? contextCheck.get() : ((ref == null) ? dataProvider.provide(context) : ref);
+        return ref;
     }
 
     private Optional<Exception> checkContext() {
