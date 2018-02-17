@@ -10,8 +10,8 @@ public interface MonadT<A> {
         return block.apply(ref());
     }
 
-    default <B, T extends MonadT<B>> T map(Function<A, T> block) {
-        return block.apply(ref());
+    default <A, T extends MonadT> T mapInternal(Function<A, T> block) {
+        return block.apply((A) ref());
     }
 
     default <B> B mapTo(Function<A, B> block) {

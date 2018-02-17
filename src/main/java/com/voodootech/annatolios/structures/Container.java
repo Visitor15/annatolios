@@ -1,19 +1,25 @@
 package com.voodootech.annatolios.structures;
 
-public class Container<A> implements MonadT<A> {
+import java.util.function.Function;
 
-    private final A ref;
+public class Container<TYPE> implements MonadT<TYPE> {
 
-    public Container(final A ref) {
+    private final TYPE ref;
+
+    public Container(final TYPE ref) {
         this.ref = ref;
     }
 
     @Override
-    public A ref() {
+    public TYPE ref() {
         return this.ref;
     }
 
     public static final <A> Container<A> apply(A a) {
         return new Container(a);
+    }
+
+    public <T> Container<T> map(Function<TYPE, T> block) {
+        return MonadT.super.<TYPE, Container<T>>mapInternal(a -> Container.<T>apply(block.apply(ref)));
     }
 }

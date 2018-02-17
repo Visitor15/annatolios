@@ -14,6 +14,8 @@ public class MultiContainer<A> extends Container<List<A>> {
         super(Arrays.asList(a));
     }
 
+    public MultiContainer(List<A> ref) { super(ref); }
+
     public A reduce(A identity, BinaryOperator<A> accumulator) {
         return ref().stream().reduce(identity, accumulator);
     }
@@ -22,8 +24,12 @@ public class MultiContainer<A> extends Container<List<A>> {
         return ref().stream().reduce(identity, accumulator, ((i, c) -> identity));
     }
 
-    public <B> List<B> mapMulti(Function<A, B> block) {
-        return ref().stream().map(block).collect(toList());
+    public <B> MultiContainer<B> mapMulti(Function<A, B> block) {
+        return MultiContainer.apply((ref().stream().map(block).collect(toList())));
+    }
+
+    public static final <A> MultiContainer<A> apply(List<A> ref) {
+        return new MultiContainer(ref);
     }
 
     public static final <A> MultiContainer<A> apply(A... a) {

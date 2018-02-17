@@ -165,6 +165,8 @@ public class StructuresTest {
     public void testContainerMonad() {
         Container<Integer> c0 = Container.apply(500);
 
+        Container<String> c42 = c0.map(i -> i.toString());
+
         assert(c0.ref() == 500);
 
         Container<String> c1 = c0.mapTo(c -> Container.apply("Hello, world!"));
@@ -179,9 +181,7 @@ public class StructuresTest {
 
         assert(c3 == 9000);
 
-        Container<String> result = c0.map(i -> Container.apply(i.toString()));
-
-        Container<List<String>> result1 = result.map(s -> Container.apply(Arrays.asList(s)));
+        Container<Container<String>> result = c0.map(i -> Container.apply(i.toString()));
     }
 
     @Test
@@ -202,7 +202,11 @@ public class StructuresTest {
 
         assert(int0 == 100);
 
-        List<Integer> integers = m1.mapMulti(s -> Integer.valueOf(s));
+        Container<String> c0 = m1.map(i -> "0");
+
+        MultiContainer<Integer> m42 = m1.mapMulti(s -> Integer.valueOf(s));
+
+        List<Integer> integers = m42.ref();
 
         assert(integers.size() == 5);
 
