@@ -1,6 +1,6 @@
 # annatolios
 
-A convenience library.
+A functionally convenient library.
 
 ## Quickstart
 
@@ -9,7 +9,7 @@ A convenience library.
 #### [Monad Transformer](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/MonadT.java)
 
 
-Implementing the ```MonadT<A>``` interface adds ```map```, ```mapTo```, and ```flatMap``` default functionality.
+Implementing the ```MonadT<A>``` interface adds ```mapTo```, and ```flatMap``` default functionality. A ```mapInternal``` is available; letting concrete classes implement their own ```map``` function and return type.
 
 ```java
 public interface MonadT<A> {
@@ -20,8 +20,8 @@ public interface MonadT<A> {
         return block.apply(ref());
     }
 
-    default <B, T extends MonadT<B>> T map(Function<A, T> block) {
-        return block.apply(ref());
+    default <A, T extends MonadT> T mapInternal(Function<A, T> block) {
+        return block.apply((A) ref());
     }
 
     default <B> B mapTo(Function<A, B> block) {
@@ -53,7 +53,7 @@ A ```SimpleStringMonad``` allows us to wrap a ```String``` and map a function to
 ```java
 SimpleStringMonad simpleMonad   = new SimpleStringMonad("Test string");
 Integer result                  = simpleMonad.mapTo(string -> 666);
-Container<String>               = simpleMonad.map(string -> Container.apply(string));
+Container<String>               = simpleMonad.mapInternal(string -> Container.apply(string));
 ```
 
 #### [Container](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/Container.java)
