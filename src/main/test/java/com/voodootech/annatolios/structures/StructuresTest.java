@@ -75,6 +75,8 @@ public class StructuresTest {
 
         Either<Exception, SimpleUserFixture.SimpleUser> resultE2 = r.ref();
 
+        Either<Exception, String> resultE42 = resultE2.map(element -> element.getId());
+
         assert(resultE2 != null);
         assert(resultE2.state().equals(Either.STATE.LEFT));
         assert(resultE2.getLeft() != null);
