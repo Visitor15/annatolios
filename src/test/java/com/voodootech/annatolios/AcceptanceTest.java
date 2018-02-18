@@ -1,6 +1,7 @@
 package com.voodootech.annatolios;
 
 import com.voodootech.annatolios.common.AbstractContext;
+import com.voodootech.annatolios.common.MonadT;
 import com.voodootech.annatolios.fixtures.SimpleDataProviderFixture;
 import com.voodootech.annatolios.fixtures.SimpleUserFixture;
 import com.voodootech.annatolios.structures.*;

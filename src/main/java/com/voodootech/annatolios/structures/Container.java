@@ -1,5 +1,7 @@
 package com.voodootech.annatolios.structures;
 
+import com.voodootech.annatolios.common.MonadT;
+
 import java.util.function.Function;
 
 public class Container<TYPE> implements MonadT<TYPE> {

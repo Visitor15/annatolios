@@ -1,4 +1,4 @@
-package com.voodootech.annatolios.structures;
+package com.voodootech.annatolios.common;
 
 import java.util.function.Function;
 
