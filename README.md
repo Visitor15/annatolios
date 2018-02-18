@@ -156,7 +156,7 @@ String  argB = tuple.getB();
 
 ```java
 Tuple<Integer, Integer> tuple0  = Tuple.from(2, 2);
-Tuple<Integer, String> tuple1   = t3.map2((a, b) -> Tuple.from(a + b, String.format("%d%d", a, b)));
+Tuple<Integer, String> tuple1   = tuple0.map2((a, b) -> Tuple.from(a + b, String.format("%d%d", a, b)));
 
 Integer int0    = tuple0.getA();    // 2
 Integer int1    = tuple0.getB();    // 2
@@ -167,16 +167,20 @@ String str0     = tuple1.getB();    // "22"
 #### [Either](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/Either.java)
 
 An ```Either<A, B>```, backed by a ```MonadT<Either<A, B>>```, is of either type ```A``` _or_ type ```B```; never both. In
-addition to being a ```MonadT```, an ```Either``` can optionally map on either its left or right side returning an ```Optional<T>``` in both cases.
+addition to being a ```MonadT```, an ```Either``` can optionally map on either its left or right side returning an ```Optional<T>``` in both cases. An Either is also right-biased with its ```map``` function.
 
 ###### Example
 
 ```java
-Either<String, Integer> either = Either.asLeft("abc");
+Either<String, Integer> either0 = Either.asLeft("abc");
+Either<String, String> either1  = either.map(i -> i.toString());
 
-Either.State state  = either.state();   // Should equal Either.State.LEFT
-boolean isLeft      = either.isLeft();  // Should equal true
-boolean isRight     = either.isRight(); // Should equal false
+Either.State state0 = either0.state();      // Should equal Either.State.LEFT
+Either.State.state1 = either1.state();      // Should equal Either.State.LEFT
+boolean isLeft0     = either0.isLeft();     // Should equal true
+boolean isLeft1     = either1.isLeft();     // Should equal true
+boolean isRight0    = either0.isRight();    // Should equal false
+boolean isRight1    = either1.isRight();    // Should equal false
 
 Optional<SimpleStringWrapper>   leftResult  = either.mapLeft(s -> new SimpleStringWrapper(s));  // Should be defined
 Optional<String>                rightResult = either.mapRight(i -> i.toString());               // Should be empty

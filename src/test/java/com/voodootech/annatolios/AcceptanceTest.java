@@ -73,6 +73,9 @@ public class AcceptanceTest {
         Either<String, Integer> e0 = Either.asLeft("Hello");
         Either<String, Integer> e1 = e0.flatMap(e -> Either.asRight(99));
 
+        Either<String, String> res0 = e0.map(i -> i.toString());
+        Either<String, String> res1 = e1.map(i -> i.toString());
+
         Tuple<String, Boolean> t0       = e0.mapTo(e -> e.isLeft() ? Tuple.from(e.getLeft(), true) : Tuple.from("ERROR", false));
         Tuple<Either.STATE, String> t1  = e1.mapTo(e -> {
             switch (e.state()) {
@@ -88,6 +91,10 @@ public class AcceptanceTest {
         Optional<Integer> res2  = e1.mapRight(i -> i * 100);
         Optional<String> res3   = e1.mapLeft(s -> s);
 
+        assert(res0.isLeft());
+        assert(res0.getLeft().equals("Hello"));
+        assert(res1.isRight());
+        assert(res1.getRight().equals("99"));
         assert(e0.state().equals(Either.STATE.LEFT));
         assert(t0.getB());
         assert(e1.state().equals(Either.STATE.RIGHT));
