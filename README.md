@@ -150,7 +150,19 @@ Integer argA = tuple.getA();
 String  argB = tuple.getB();
 ```
 
-```Tuple``` is backed by ```MonadT<Tuple<A, B>>``` allowing you to ```map```, ```mapTo```, and ```flatMap``` on a tuple object.
+```Tuple``` is backed by ```MonadT<Tuple<A, B>>``` allowing you to ```mapTo```, and ```flatMap``` on a tuple object. A specialized ```map2``` function is also available.
+
+###### Example
+
+```java
+Tuple<Integer, Integer> tuple0  = Tuple.from(2, 2);
+Tuple<Integer, String> tuple1   = t3.map2((a, b) -> Tuple.from(a + b, String.format("%d%d", a, b)));
+
+Integer int0    = tuple0.getA();    // 2
+Integer int1    = tuple0.getB();    // 2
+Integer int2    = tuple1.getA();    // 4
+String str0     = tuple1.getB();    // "22"
+```
 
 #### [Either](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/Either.java)
 
@@ -186,24 +198,26 @@ public final class SimpleStringWrapper {
 
 #### [Invocable](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/invocation/Invocable.java)
 
-```Invocable<T extends AbstractContext, E extends Exception>``` is an interface allowing classes to invoke a function within a Try/Catch block with recovery hooks to handle exceptions. 
+```Invocable<CONTEXT extends AbstractContext, ERROR extends Exception>``` is an interface allowing classes to invoke a function within a Try/Catch block with recovery hooks to handle exceptions. 
 
 A class implementing Invocable must implement:
 
 ```java
-public E buildErrorEntity(final String errorMessage);
+public ERROR buildErrorEntity(final String errorMessage);
 
-public <A extends Exception> E buildErrorEntity(final A exception);
+public <A extends Exception> ERROR buildErrorEntity(final A exception);
 ```
 
 Provided methods:
 
 ```java
-public <A, B> B invokeWithTryCatch(T c, A a, Function<E, B> errorFunc, BiFunction<T, A, B> func)
+public <A, B> B invokeWithTryCatch(CONTEXT c, A a, Function<ERROR, B> errorFunc, BiFunction<CONTEXT, A, B> func)
 
-public <A> A invokeWithTryCatch(T c, Function<E, A> errorFunc, Function<T, A> func)
+public <A> A invokeWithTryCatch(CONTEXT c, Function<ERROR, A> errorFunc, Function<CONTEXT, A> func)
 
-public <A> A invokeWithTryCatch(Function<E, A> errorFunc, Supplier<A> func)
+public <A> A invokeWithTryCatch(Function<ERROR, A> errorFunc, Supplier<A> func)
+
+public <A> Either<Exception, A> invoke(CONTEXT c, Function<CONTEXT, A> func)
 ```
 
 ###### Example
@@ -213,10 +227,10 @@ public <A> A invokeWithTryCatch(Function<E, A> errorFunc, Supplier<A> func)
 ```java
 List<Data> data     = new ArrayList<>();
 List<Error> errors  = new ArrayList<>();
-Tuple<List<Error>, List<Data>> result = MultiContainer.apply(SERVICE_1, SERVICE_2, SERVICE_3).fold(Tuple.from(errors, facts), ((acc, s) -> {
-    List<Data> serviceResponse = invokeWithTryCatch(c, s, (e) -> {
+Tuple<List<Error>, List<Data>> result = MultiContainer.apply(SERVICE_1, SERVICE_2, SERVICE_3).fold(Tuple.from(errors, facts), ((acc, service) -> {
+    List<Data> serviceResponse = invokeWithTryCatch(context, service, (exception) -> {
         // Adding service error to tuple and returning an empty list
-        acc.getA().add(handleResourceAccessException(e));
+        acc.getA().add(handleResourceAccessException(exception));
         return new ArrayList<Data>();
     }, (context, service) -> assembler.assemble(httpClient.read(context, service)));
     // Adding data from http response to tuple
