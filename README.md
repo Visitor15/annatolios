@@ -6,8 +6,7 @@ A functionally convenient library.
 
 ### Data structures
 
-#### [Monad Transformer](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/MonadT.java)
-
+#### [Monad Transformer](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/common/MonadT.java)
 
 Implementing the ```MonadT<A>``` interface adds ```mapTo```, and ```flatMap``` default functionality. A ```mapInternal``` is available; letting concrete classes implement their own ```map``` function and return type.
 
