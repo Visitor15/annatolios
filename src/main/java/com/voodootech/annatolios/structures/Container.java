@@ -22,6 +22,6 @@ public class Container<TYPE> implements MonadT<TYPE> {
     }
 
     public <T> Container<T> map(Function<TYPE, T> block) {
-        return MonadT.super.<TYPE, Container<T>>mapInternal(a -> Container.<T>apply(block.apply(ref)));
+        return MonadT.super.<Container<T>>mapInternal(a -> Container.apply(block.apply(ref)));
     }
 }

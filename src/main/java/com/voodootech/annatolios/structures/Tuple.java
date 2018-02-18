@@ -27,7 +27,7 @@ public class Tuple<A, B> implements MonadT<Tuple<A, B>> {
         return this.b;
     }
 
-    public <C> C map2(BiFunction<A, B, C> block) {
+    public <A1, B1, C extends Tuple<A1, B1>> C map2(BiFunction<A, B, C> block) {
         return block.apply(getA(), getB());
     }
 

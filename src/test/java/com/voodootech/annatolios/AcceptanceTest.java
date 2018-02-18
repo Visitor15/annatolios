@@ -28,7 +28,7 @@ public class AcceptanceTest {
     @Test
     public void testMonadT() {
         MonadT<String> monad0   = () -> "Test string";
-        MonadT<UUID> monad1     = monad0.<String, MonadT<UUID>>mapInternal(string -> () -> UUID.randomUUID());
+        MonadT<UUID> monad1     = monad0.mapInternal(string -> () -> UUID.randomUUID());
         MonadT<UUID> monad2     = monad1.flatMap(uuid -> () -> UUID.randomUUID());
 
         Integer int0 = monad0.mapTo(string -> 9000);
@@ -107,17 +107,15 @@ public class AcceptanceTest {
         Tuple<Boolean, Boolean> t2 = t1.flatMap(t -> Tuple.from(false, false));
         Tuple<Integer, Integer> t3 = Tuple.from(2, 2);
 
-        Integer int0 = t1.mapTo(t -> 500);
-        Integer int1 = t3.map2((a, b) -> a + b);
-
-        String str0 = t3.map2((a, b) -> String.valueOf(a + b));
+        Integer int0                        = t1.mapTo(t -> 500);
+        Tuple<Integer, String> tupleIntStr0 = t3.map2((a, b) -> Tuple.from(a + b, String.format("%d%d", a, b)));
 
         assert(!t0.getA() && !t0.getB());
         assert(t1.getA() && t1.getB());
         assert(int0 == 500);
         assert(!t2.getA() && !t2.getB());
-        assert(int1 == 4);
-        assert(str0.equals("4"));
+        assert(tupleIntStr0.getA() == 4);
+        assert(tupleIntStr0.getB().equals("22"));
     }
 
     @Test

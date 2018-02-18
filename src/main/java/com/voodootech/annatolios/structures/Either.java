@@ -40,7 +40,7 @@ public class Either<A, B> implements MonadT<Either<A, B>> {
     }
 
     public <C> Either<A, C> map(Function<B, C> block) {
-        return MonadT.super.<Either<A, B>, Either<A, C>>mapInternal(a -> (Either<A, C>) mapRight(element -> Either.asRight(block.apply(element))).orElse(Either.asLeft(getLeft())));
+        return MonadT.super.<Either<A, C>>mapInternal(a -> (Either<A, C>) mapRight(element -> Either.asRight(block.apply(element))).orElse(Either.asLeft(getLeft())));
     }
 
     public STATE state() {

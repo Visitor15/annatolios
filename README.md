@@ -20,8 +20,8 @@ public interface MonadT<A> {
         return block.apply(ref());
     }
 
-    default <A, T extends MonadT> T mapInternal(Function<A, T> block) {
-        return block.apply((A) ref());
+    default <T extends MonadT> T mapInternal(Function<A, T> block) {
+        return block.apply(ref());
     }
 
     default <B> B mapTo(Function<A, B> block) {
@@ -64,7 +64,7 @@ A ```Container<A>``` wraps any type ```A``` in a monad transformer. A static met
 
 ```java
 Container<Integer> integerContainer = Container.apply(500);
-
+Container<String> stringContainer   = integerContainer.map(i -> i.toString());
 ```
 
 #### [MultiContainer](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/MultiContainer.java)
@@ -72,6 +72,17 @@ Container<Integer> integerContainer = Container.apply(500);
 A ```MultiContainer<A>``` is backed by a ```Container<List<A>>```. Using a ```MultiContainer<A>``` gives the ability to ```reduce```, ```fold```, and ```mapMulti```.
 
 ```mapMulti``` allows you to map a function to each element in the MultiContainer instead of the list of elements as a whole.
+
+```java
+MultiContainer<String> m0   = MultiContainer.apply("1", "2", "3", "4", "5");
+MultiContainer<Integer> m1  = m0.mapMulti(s -> Integer.valueOf(s));
+
+// Reducing multiple Strings to a single String
+String strSum0 = m0.reduce("", ((acc, s) -> String.format("%s%s", acc, s)));    // strSum0 = "12345"
+
+// Folding multiple Integers into a single String
+String strSum1 = m1.fold("", ((acc, i) -> String.format("%s%d", acc, i)));      // strSum1 = "12345"
+```
 
 #### [IOContainer](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/IOContainer.java)
 
