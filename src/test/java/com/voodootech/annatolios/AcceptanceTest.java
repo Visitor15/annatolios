@@ -1,18 +1,18 @@
 package com.voodootech.annatolios;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.voodootech.annatolios.common.AbstractContext;
 import com.voodootech.annatolios.common.MonadT;
 import com.voodootech.annatolios.fixtures.SimpleDataProviderFixture;
 import com.voodootech.annatolios.fixtures.SimpleUserFixture;
+import com.voodootech.annatolios.fixtures.TestModelFixtures;
 import com.voodootech.annatolios.structures.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
+import java.net.MalformedURLException;
+import java.util.*;
 
 @RunWith(value = Parameterized.class)
 public class AcceptanceTest {
@@ -173,5 +173,30 @@ public class AcceptanceTest {
         assert(resultE3 != null);
         assert(resultE3.state().equals(Either.STATE.RIGHT));
         assert(resultE3.getRight() != null);
+    }
+
+    @Test
+    public void testNetworkIOContainer() throws MalformedURLException {
+        SimpleDataProviderFixture.NetworkDataProvider networkDataProvider       = SimpleDataProviderFixture.newNetworkDataProvider();
+        TypeReference<List<TestModelFixtures.KhanAcademyBadge>> typeReference   = new TypeReference<List<TestModelFixtures.KhanAcademyBadge>>() { };
+        SimpleDataProviderFixture.NetworkContext context                        = new SimpleDataProviderFixture.NetworkContext("artemismasterybadge", "http://www.khanacademy.org/api/v1/badges", "GET", typeReference);
+
+        IOContainer<SimpleDataProviderFixture.NetworkContext, Container<TestModelFixtures.KhanAcademyBadge>> networkIOContainer = IOContainer.apply(networkDataProvider);
+
+        Either<Exception, Container<TestModelFixtures.KhanAcademyBadge>> resultE0 = networkIOContainer.ref(context);
+
+        assert(resultE0.isRight());
+
+        Container<TestModelFixtures.KhanAcademyBadge> res0 = resultE0.getRight();
+
+        context = new SimpleDataProviderFixture.NetworkContext("doublepowerhourbadge", "http://www.khanacademy.org/api/v1/badges", "GET", typeReference);
+
+        Either<Exception, Container<TestModelFixtures.KhanAcademyBadge>> resultE1 = networkIOContainer.ref(context);
+
+        assert(resultE1.isRight());
+
+        Container<TestModelFixtures.KhanAcademyBadge> res1 = resultE1.getRight();
+
+        assert(!res0.ref().getName().equals(res1.ref().getName()));
     }
 }

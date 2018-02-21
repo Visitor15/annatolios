@@ -1,10 +1,16 @@
 package com.voodootech.annatolios.fixtures;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voodootech.annatolios.common.AbstractContext;
 import com.voodootech.annatolios.providers.DataProvider;
 import com.voodootech.annatolios.structures.Container;
 import com.voodootech.annatolios.structures.Either;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +27,10 @@ public class SimpleDataProviderFixture {
 
     public static final MockedDataProvider newMockedDataProvider() {
         return new MockedDataProvider();
+    }
+
+    public static final NetworkDataProvider newNetworkDataProvider() {
+        return new NetworkDataProvider();
     }
 
     public static final class SimpleDataProvider extends DataProvider<AbstractContext, SimpleUserFixture.SimpleUser> {
@@ -97,6 +107,43 @@ public class SimpleDataProviderFixture {
         }
     }
 
+    public static final class NetworkDataProvider extends DataProvider<NetworkContext, Container<TestModelFixtures.KhanAcademyBadge>> {
+
+        @Override
+        public Either<Exception, Container<TestModelFixtures.KhanAcademyBadge>> provide(NetworkContext c) {
+            return resolveReference(c, (context) -> Container.apply(retrieve(context)));
+        }
+
+        @Override
+        public Exception buildErrorEntity(String errorMessage) {
+            return new RuntimeException(errorMessage);
+        }
+
+        @Override
+        public <A extends Exception> Exception buildErrorEntity(A exception) {
+            return exception;
+        }
+
+        private TestModelFixtures.KhanAcademyBadge retrieve(NetworkContext c) {
+            try {
+                HttpURLConnection connection = (HttpURLConnection) c.getUrl().openConnection();
+                connection.setRequestMethod(c.getMethod());
+                ObjectMapper mapper = new ObjectMapper();
+                List<TestModelFixtures.KhanAcademyBadge> response = mapper.readValue(connection.getInputStream(), c.type);
+                Optional<TestModelFixtures.KhanAcademyBadge> optBadge = response.stream().reduce((acc, s) -> {
+                    if (s.getName().equals(c.getId())) {
+                        return s;
+                    } else return acc;
+                });
+                if(optBadge.isPresent()) return optBadge.get();
+                else throw new IllegalArgumentException(String.format("Result for id %s not found", c.getId()));
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+    }
+
     public static final class SimpleContext extends AbstractContext {
 
         private final String firstName;
@@ -120,6 +167,32 @@ public class SimpleDataProviderFixture {
 
         public String getEmail() {
             return email;
+        }
+    }
+
+    public static final class NetworkContext extends AbstractContext {
+
+        private final URL           url;
+        private final String        method;
+        private final TypeReference type;
+
+        public NetworkContext(String id, String url, String method, TypeReference type) throws MalformedURLException {
+            super(id);
+            this.url    = new URL(url);
+            this.method = method;
+            this.type  = type;
+        }
+
+        public URL getUrl() {
+            return url;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public TypeReference getType() {
+            return this.type;
         }
     }
 }
