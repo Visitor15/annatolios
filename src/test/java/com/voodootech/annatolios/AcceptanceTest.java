@@ -56,7 +56,7 @@ public class AcceptanceTest {
         });
 
         Container<String> c3 = Container.apply(Optional.of(2)).map(optInt -> Optional.<Integer>empty()).map(emptyOpt -> {
-            // We should never get here as 's' is null
+            // We should never get here since we returned an empty optional in the pipeline
             assert(false);
             return "string value";
         });
