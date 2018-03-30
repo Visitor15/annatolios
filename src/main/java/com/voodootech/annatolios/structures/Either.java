@@ -1,11 +1,11 @@
 package com.voodootech.annatolios.structures;
 
-import com.voodootech.annatolios.common.MonadT;
+import com.voodootech.annatolios.common.Monad;
 
 import java.util.Optional;
 import java.util.function.Function;
 
-public class Either<A, B> implements MonadT<Either<A, B>> {
+public class Either<A, B> implements Monad<Either<A, B>> {
 
     public enum STATE {
         LEFT,
@@ -40,7 +40,7 @@ public class Either<A, B> implements MonadT<Either<A, B>> {
     }
 
     public <C> Either<A, C> map(Function<B, C> block) {
-        return MonadT.super.<Either<A, C>>mapInternal(a -> (Either<A, C>) mapRight(element -> Either.asRight(block.apply(element))).orElseGet(() -> Either.asLeft(getLeft())));
+        return Monad.super.<Either<A, C>>mapInternal(a -> (Either<A, C>) mapRight(element -> Either.asRight(block.apply(element))).orElseGet(() -> Either.asLeft(getLeft())));
     }
 
     public STATE state() {

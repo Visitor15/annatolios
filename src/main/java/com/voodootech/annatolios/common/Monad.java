@@ -2,15 +2,15 @@ package com.voodootech.annatolios.common;
 
 import java.util.function.Function;
 
-public interface MonadT<A> {
+public interface Monad<A> {
 
     A ref();
 
-    default <B extends MonadT<A>> B flatMap(Function<A, B> block) {
+    default <B extends Monad<A>> B flatMap(Function<A, B> block) {
         return block.apply(ref());
     }
 
-    default <T extends MonadT> T mapInternal(Function<A, T> block) {
+    default <T extends Monad> T mapInternal(Function<A, T> block) {
         return block.apply(ref());
     }
 

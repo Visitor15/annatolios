@@ -1,10 +1,10 @@
 package com.voodootech.annatolios.structures;
 
-import com.voodootech.annatolios.common.MonadT;
+import com.voodootech.annatolios.common.Monad;
 
 import java.util.function.Function;
 
-public class Container<TYPE> implements MonadT<TYPE> {
+public class Container<TYPE> implements Monad<TYPE> {
 
     private final TYPE ref;
 
@@ -22,6 +22,6 @@ public class Container<TYPE> implements MonadT<TYPE> {
     }
 
     public <T> Container<T> map(Function<TYPE, T> block) {
-        return MonadT.super.<Container<T>>mapInternal(a -> Container.apply(block.apply(ref)));
+        return Monad.super.<Container<T>>mapInternal(a -> Container.apply(block.apply(ref)));
     }
 }

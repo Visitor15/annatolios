@@ -1,10 +1,10 @@
 package com.voodootech.annatolios.structures;
 
-import com.voodootech.annatolios.common.MonadT;
+import com.voodootech.annatolios.common.Monad;
 
 import java.util.function.BiFunction;
 
-public class Tuple<A, B> implements MonadT<Tuple<A, B>> {
+public class Tuple<A, B> implements Monad<Tuple<A, B>> {
 
     private final A a;
     private final B b;

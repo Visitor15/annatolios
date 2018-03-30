@@ -107,11 +107,11 @@ public class SimpleDataProviderFixture {
         }
     }
 
-    public static final class NetworkDataProvider extends DataProvider<NetworkContext, Container<TestModelFixtures.KhanAcademyBadge>> {
+    public static final class NetworkDataProvider extends DataProvider<NetworkContext, TestModelFixtures.KhanAcademyBadge> {
 
         @Override
-        public Either<Exception, Container<TestModelFixtures.KhanAcademyBadge>> provide(NetworkContext c) {
-            return resolveReference(c, (context) -> Container.apply(retrieve(context)));
+        public Either<Exception, TestModelFixtures.KhanAcademyBadge> provide(NetworkContext c) {
+            return resolveReference(c, (context) -> retrieve(context));
         }
 
         @Override

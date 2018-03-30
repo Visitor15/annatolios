@@ -2,7 +2,7 @@ package com.voodootech.annatolios;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.voodootech.annatolios.common.AbstractContext;
-import com.voodootech.annatolios.common.MonadT;
+import com.voodootech.annatolios.common.Monad;
 import com.voodootech.annatolios.fixtures.SimpleDataProviderFixture;
 import com.voodootech.annatolios.fixtures.SimpleUserFixture;
 import com.voodootech.annatolios.fixtures.TestModelFixtures;
@@ -27,9 +27,9 @@ public class AcceptanceTest {
 
     @Test
     public void testMonadT() {
-        MonadT<String> monad0   = () -> "Test string";
-        MonadT<UUID> monad1     = monad0.mapInternal(string -> () -> UUID.randomUUID());
-        MonadT<UUID> monad2     = monad1.flatMap(uuid -> () -> UUID.randomUUID());
+        Monad<String> monad0   = () -> "Test string";
+        Monad<UUID> monad1     = monad0.mapInternal(string -> () -> UUID.randomUUID());
+        Monad<UUID> monad2     = monad1.flatMap(uuid -> () -> UUID.randomUUID());
 
         Integer int0 = monad0.mapTo(string -> 9000);
 
@@ -181,22 +181,22 @@ public class AcceptanceTest {
         TypeReference<List<TestModelFixtures.KhanAcademyBadge>> typeReference   = new TypeReference<List<TestModelFixtures.KhanAcademyBadge>>() { };
         SimpleDataProviderFixture.NetworkContext context                        = new SimpleDataProviderFixture.NetworkContext("artemismasterybadge", "http://www.khanacademy.org/api/v1/badges", "GET", typeReference);
 
-        IOContainer<SimpleDataProviderFixture.NetworkContext, Container<TestModelFixtures.KhanAcademyBadge>> networkIOContainer = IOContainer.apply(networkDataProvider);
+        IOContainer<SimpleDataProviderFixture.NetworkContext, TestModelFixtures.KhanAcademyBadge> networkIOContainer = IOContainer.apply(networkDataProvider);
 
-        Either<Exception, Container<TestModelFixtures.KhanAcademyBadge>> resultE0 = networkIOContainer.ref(context);
+        Either<Exception, TestModelFixtures.KhanAcademyBadge> resultE0 = networkIOContainer.ref(context);
 
         assert(resultE0.isRight());
 
-        Container<TestModelFixtures.KhanAcademyBadge> res0 = resultE0.getRight();
+        TestModelFixtures.KhanAcademyBadge res0 = resultE0.getRight();
 
         context = new SimpleDataProviderFixture.NetworkContext("doublepowerhourbadge", "http://www.khanacademy.org/api/v1/badges", "GET", typeReference);
 
-        Either<Exception, Container<TestModelFixtures.KhanAcademyBadge>> resultE1 = networkIOContainer.ref(context);
+        Either<Exception, TestModelFixtures.KhanAcademyBadge> resultE1 = networkIOContainer.ref(context);
 
         assert(resultE1.isRight());
 
-        Container<TestModelFixtures.KhanAcademyBadge> res1 = resultE1.getRight();
+        TestModelFixtures.KhanAcademyBadge res1 = resultE1.getRight();
 
-        assert(!res0.ref().getName().equals(res1.ref().getName()));
+        assert(!res0.getName().equals(res1.getName()));
     }
 }
