@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>annatolios</name>
-    <description>A functionally convenient library.</description>
+    <description>A functionally convenient java library.</description>
     <url>https://github.com/Visitor15/annatolios</url>
 
     <licenses>

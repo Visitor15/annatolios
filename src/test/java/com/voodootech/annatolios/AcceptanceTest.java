@@ -45,10 +45,29 @@ public class AcceptanceTest {
         Container<String> c0    = Container.apply("Test string");
         Container<Integer> c1   = c0.map(s -> 9000);
 
+        Container<String> c2 = Container.apply(2).map(i -> {
+            String s = "2 + " + i.toString();
+            s = null;
+            return s;
+        }).map(s -> {
+            // We should never get here as 's' is null
+            assert(false);
+            return s;
+        });
+
+        Container<String> c3 = Container.apply(Optional.of(2)).map(optInt -> Optional.<Integer>empty()).map(emptyOpt -> {
+            // We should never get here as 's' is null
+            assert(false);
+            return "string value";
+        });
+
         assert(c0.ref() instanceof String);
         assert(c1.ref() instanceof Integer);
         assert(c0.ref().equals("Test string"));
         assert(c1.ref() == 9000);
+        assert(c2 instanceof EmptyContainer);
+        assert(c2.ref() == null);
+        assert(c3.ref() == null);
     }
 
     @Test
