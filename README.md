@@ -6,20 +6,20 @@ A functionally convenient library.
 
 ### Data structures
 
-#### [Monad Transformer](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/common/MonadT.java)
+#### [Monad Transformer](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/common/Monad.java)
 
-Implementing the ```MonadT<A>``` interface adds ```mapTo```, and ```flatMap``` default functionality. A ```mapInternal``` is available; letting concrete classes implement their own ```map``` function and return type.
+Implementing the ```Monad<A>``` interface adds ```mapTo```, and ```flatMap``` default functionality. A ```mapInternal``` is available; letting concrete classes implement their own ```map``` function and return type.
 
 ```java
-public interface MonadT<A> {
+public interface Monad<A> {
 
     A ref();
 
-    default <B extends MonadT<A>> B flatMap(Function<A, B> block) {
+    default <B extends Monad<A>> B flatMap(Function<A, B> block) {
         return block.apply(ref());
     }
 
-    default <T extends MonadT> T mapInternal(Function<A, T> block) {
+    default <T extends Monad> T mapInternal(Function<A, T> block) {
         return block.apply(ref());
     }
 
@@ -32,7 +32,7 @@ public interface MonadT<A> {
 ###### Example
 
 ```java
-public class SimpleStringMonad implements MonadT<String> {
+public class SimpleStringMonad implements Monad<String> {
 
     private final String ref;
 
@@ -50,20 +50,36 @@ public class SimpleStringMonad implements MonadT<String> {
 A ```SimpleStringMonad``` allows us to wrap a ```String``` and map a function to its value.
 
 ```java
-SimpleStringMonad simpleMonad   = new SimpleStringMonad("Test string");
-Integer result                  = simpleMonad.mapTo(string -> 666);
-Container<String>               = simpleMonad.mapInternal(string -> Container.apply(string));
+SimpleStringMonad simpleMonad   = new SimpleStringMonad("666");
+SimpleStringMonad<Integer> res1 = simpleMonad.map(string -> Integer.valueOf(string));
+Integer res0                    = simpleMonad.mapTo(string -> Integer.valueOf(string));
 ```
 
 #### [Container](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/Container.java)
 
-A ```Container<A>``` wraps any type ```A``` in a monad transformer. A static method ```public static final <A> Container<A> apply(A a)``` is available to construct a ```Container```.
+A ```Container<A>``` wraps any type ```A``` in a monad. A static method ```apply(A a)``` is available to construct a ```Container```.
 
 ###### Example
 
 ```java
-Container<Integer> integerContainer = Container.apply(500);
-Container<String> stringContainer   = integerContainer.map(i -> i.toString());
+Container<Integer> intContainer = Container.apply(500);
+
+// map
+Container<String> strContainer  = intContainer.map(i -> i.toString());
+
+// flatMap
+Container<User> user    = Container.apply("some-account-id").flatMap(id -> getUser(id));
+
+private Container<User> getUser(String id) {
+    return Container.apply(new User(id));
+}
+
+public class User {
+    public final String id;
+    public User(String id) {
+        this.id = id;
+    }
+}
 ```
 
 #### [MultiContainer](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/MultiContainer.java)
@@ -149,7 +165,7 @@ Integer argA = tuple.getA();
 String  argB = tuple.getB();
 ```
 
-```Tuple``` is backed by ```MonadT<Tuple<A, B>>``` allowing you to ```mapTo```, and ```flatMap``` on a tuple object. A specialized ```map2``` function is also available.
+```Tuple``` is backed by ```Monad<Tuple<A, B>>``` allowing you to ```mapTo```, and ```flatMap``` on a tuple object. A specialized ```map2``` function is also available.
 
 ###### Example
 
@@ -165,8 +181,8 @@ String str0     = tuple1.getB();    // "22"
 
 #### [Either](https://github.com/Visitor15/annatolios/blob/master/src/main/java/com/voodootech/annatolios/structures/Either.java)
 
-An ```Either<A, B>```, backed by a ```MonadT<Either<A, B>>```, is of either type ```A``` _or_ type ```B```; never both. In
-addition to being a ```MonadT```, an ```Either``` can optionally map on either its left or right side returning an ```Optional<T>``` in both cases. An Either is also right-biased with its ```map``` function.
+An ```Either<A, B>```, backed by a ```Monad<Either<A, B>>```, is of either type ```A``` _or_ type ```B```; never both. In
+addition to being a ```Monad```, an ```Either``` can optionally map on either its left or right side returning an ```Optional<T>``` in both cases. An Either is also right-biased with its ```map``` function.
 
 ###### Example
 
