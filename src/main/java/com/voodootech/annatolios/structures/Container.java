@@ -23,7 +23,6 @@ public class Container<TYPE> implements Monad<TYPE> {
     }
 
     public <T> Container<T> map(Function<TYPE, T> block) {
-        return (ref == null || (ref instanceof Optional && !((Optional) ref).isPresent()) ? Container.apply(null) : Monad.super.mapInternal(a -> Container.apply(block.apply(ref))));
-//        return (ref == null ? Monad.super.<Container<T>>mapInternal(a -> Container.apply(block.apply(ref)));
+        return (isEmpty()) ? Container.apply(null) : mapInternal(a -> Container.apply(block.apply(ref)));
     }
 }

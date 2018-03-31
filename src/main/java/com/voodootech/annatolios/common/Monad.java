@@ -1,12 +1,13 @@
 package com.voodootech.annatolios.common;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 public interface Monad<A> {
 
     A ref();
 
-    default <B extends Monad<A>> B flatMap(Function<A, B> block) {
+    default <T, B extends Monad<T>> B flatMap(Function<A, B> block) {
         return block.apply(ref());
     }
 
@@ -16,5 +17,10 @@ public interface Monad<A> {
 
     default <B> B mapTo(Function<A, B> block) {
         return block.apply(ref());
+    }
+
+    default boolean isEmpty() {
+        A ref = ref();
+        return (ref == null || (ref instanceof Optional && !((Optional) ref).isPresent()) || (ref instanceof Monad && ((Monad) ref).isEmpty()));
     }
 }

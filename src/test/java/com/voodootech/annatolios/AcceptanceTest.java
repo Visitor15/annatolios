@@ -50,7 +50,7 @@ public class AcceptanceTest {
             s = null;
             return s;
         }).map(s -> {
-            // We should never get here as 's' is null
+            // We should never get here as 's' is null and an EmptyContainer is returned in the pipeline
             assert(false);
             return s;
         });
@@ -61,6 +61,8 @@ public class AcceptanceTest {
             return "string value";
         });
 
+        Container<String> c4 = Container.apply(2).flatMap(i -> Container.apply(i.toString()));
+
         assert(c0.ref() instanceof String);
         assert(c1.ref() instanceof Integer);
         assert(c0.ref().equals("Test string"));
@@ -68,6 +70,8 @@ public class AcceptanceTest {
         assert(c2 instanceof EmptyContainer);
         assert(c2.ref() == null);
         assert(c3.ref() == null);
+        assert(c4.ref() instanceof String);
+        assert(c4.ref().equals("2"));
     }
 
     @Test
