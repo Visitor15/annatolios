@@ -3,11 +3,11 @@ package com.voodootech.annatolios.common;
 import java.util.Optional;
 import java.util.function.Function;
 
-public interface Monoid<A> {
+public interface Functor<A> {
 
     A ref();
 
-    default <T extends Monad> T mapInternal(Function<A, T> block) {
+    default <T extends Functor> T mapInternal(Function<A, T> block) {
         return block.apply(ref());
     }
 
@@ -17,6 +17,6 @@ public interface Monoid<A> {
 
     default boolean isEmpty() {
         A ref = ref();
-        return (ref == null || (ref instanceof Optional && !((Optional) ref).isPresent()) || (ref instanceof Monoid && ((Monad) ref).isEmpty()));
+        return (ref == null || (ref instanceof Optional && !((Optional) ref).isPresent()) || (ref instanceof Functor && ((Functor) ref).isEmpty()));
     }
 }

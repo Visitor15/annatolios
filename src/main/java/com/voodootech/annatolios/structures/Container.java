@@ -2,7 +2,6 @@ package com.voodootech.annatolios.structures;
 
 import com.voodootech.annatolios.common.Monad;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 public class Container<TYPE> implements Monad<TYPE> {
