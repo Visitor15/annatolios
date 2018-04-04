@@ -3,7 +3,7 @@ package com.voodootech.annatolios.fixtures;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voodootech.annatolios.common.AbstractContext;
-import com.voodootech.annatolios.providers.DataProvider;
+import com.voodootech.annatolios.providers.AsyncDataProvider;
 import com.voodootech.annatolios.structures.Container;
 import com.voodootech.annatolios.structures.Either;
 
@@ -33,7 +33,7 @@ public class SimpleDataProviderFixture {
         return new NetworkDataProvider();
     }
 
-    public static final class SimpleDataProvider extends DataProvider<AbstractContext, SimpleUserFixture.SimpleUser> {
+    public static final class SimpleDataProvider extends AsyncDataProvider<AbstractContext, SimpleUserFixture.SimpleUser> {
 
         @Override
         public Exception buildErrorEntity(String errorMessage) {
@@ -56,7 +56,7 @@ public class SimpleDataProviderFixture {
         }
     }
 
-    public static final class ExplodingDataProvider extends DataProvider<AbstractContext, SimpleUserFixture.SimpleUser> {
+    public static final class ExplodingDataProvider extends AsyncDataProvider<AbstractContext, SimpleUserFixture.SimpleUser> {
 
         @Override
         public Exception buildErrorEntity(String errorMessage) {
@@ -78,7 +78,7 @@ public class SimpleDataProviderFixture {
         }
     }
 
-    public static final class MockedDataProvider extends DataProvider<SimpleContext, SimpleUserFixture.SimpleUser> {
+    public static final class MockedDataProvider extends AsyncDataProvider<SimpleContext, SimpleUserFixture.SimpleUser> {
 
         private static final List<SimpleUserFixture.SimpleUser> users = new ArrayList<SimpleUserFixture.SimpleUser>() {{
             add(new SimpleUserFixture.SimpleUser("123", "testuser1@email.com"));
@@ -107,7 +107,7 @@ public class SimpleDataProviderFixture {
         }
     }
 
-    public static final class NetworkDataProvider extends DataProvider<NetworkContext, TestModelFixtures.KhanAcademyBadge> {
+    public static final class NetworkDataProvider extends AsyncDataProvider<NetworkContext, TestModelFixtures.KhanAcademyBadge> {
 
         @Override
         public Either<Exception, TestModelFixtures.KhanAcademyBadge> provide(NetworkContext c) {
@@ -138,7 +138,6 @@ public class SimpleDataProviderFixture {
                 if(optBadge.isPresent()) return optBadge.get();
                 else throw new IllegalArgumentException(String.format("Result for id %s not found", c.getId()));
             } catch (IOException e) {
-                System.out.println(e.getMessage());
                 throw new RuntimeException(e.getMessage());
             }
         }

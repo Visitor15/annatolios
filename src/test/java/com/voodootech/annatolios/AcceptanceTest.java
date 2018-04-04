@@ -2,6 +2,7 @@ package com.voodootech.annatolios;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.voodootech.annatolios.common.AbstractContext;
+import com.voodootech.annatolios.common.EitherF;
 import com.voodootech.annatolios.common.Monad;
 import com.voodootech.annatolios.fixtures.SimpleDataProviderFixture;
 import com.voodootech.annatolios.fixtures.SimpleUserFixture;
@@ -159,9 +160,9 @@ public class AcceptanceTest {
         IOContainer<SimpleDataProviderFixture.SimpleContext, SimpleUserFixture.SimpleUser> r1   = c4.flatMap(new SimpleDataProviderFixture.SimpleContext("123", "FIRST_NAME", "LAST_NAME", "testuser1@email.com"), either -> either.getRight());
 
         String userId                                               = c0.mapTo(userE -> userE.getRight().getId());
-        Either<Exception, SimpleUserFixture.SimpleUser> optUserE    = c1.ref();
+        Either<Exception, SimpleUserFixture.SimpleUser> optUserE    = c1.resolveReference();
         SimpleUserFixture.SimpleUser user                           = c2.mapTo(u -> u.getRight());
-        Either<Exception, SimpleUserFixture.SimpleUser> resultE0    = c2.ref(new SimpleDataProviderFixture.SimpleContext("bad_user_id", "", "", "bad_email@email.com"));
+        Either<Exception, SimpleUserFixture.SimpleUser> resultE0    = c2.resolveReference(new SimpleDataProviderFixture.SimpleContext("bad_user_id", "", "", "bad_email@email.com"));
 
         Optional<SimpleUserFixture.SimpleUser> optUser              = c3.mapTo(r -> {
             switch (r.state()) {
@@ -173,11 +174,11 @@ public class AcceptanceTest {
             return Optional.ofNullable(r.getRight());
         });
 
-        Either<Exception, SimpleUserFixture.SimpleUser> resultE2    = r0.ref();
-        Either<Exception, SimpleUserFixture.SimpleUser> resultE3    = r1.ref();
-        Either<Exception, SimpleUserFixture.SimpleUser> resultE1    = c3.ref();
+        Either<Exception, SimpleUserFixture.SimpleUser> resultE2    = r0.resolveReference();
+        Either<Exception, SimpleUserFixture.SimpleUser> resultE3    = r1.resolveReference();
+        Either<Exception, SimpleUserFixture.SimpleUser> resultE1    = c3.resolveReference();
 
-        assert(userId.equals(c0.ref().getRight().getId()));
+        assert(userId.equals(c0.resolveReference().getRight().getId()));
         assert(optUserE.isLeft());
         assert(optUserE.state().equals(Either.STATE.LEFT));
         assert(user != null);
@@ -206,7 +207,7 @@ public class AcceptanceTest {
 
         IOContainer<SimpleDataProviderFixture.NetworkContext, TestModelFixtures.KhanAcademyBadge> networkIOContainer = IOContainer.apply(networkDataProvider);
 
-        Either<Exception, TestModelFixtures.KhanAcademyBadge> resultE0 = networkIOContainer.ref(context);
+        Either<Exception, TestModelFixtures.KhanAcademyBadge> resultE0 = networkIOContainer.resolveReference(context);
 
         assert(resultE0.isRight());
 
@@ -214,12 +215,22 @@ public class AcceptanceTest {
 
         context = new SimpleDataProviderFixture.NetworkContext("doublepowerhourbadge", "http://www.khanacademy.org/api/v1/badges", "GET", typeReference);
 
-        Either<Exception, TestModelFixtures.KhanAcademyBadge> resultE1 = networkIOContainer.ref(context);
+        Either<Exception, TestModelFixtures.KhanAcademyBadge> resultE1 = networkIOContainer.resolveReference(context);
 
         assert(resultE1.isRight());
 
         TestModelFixtures.KhanAcademyBadge res1 = resultE1.getRight();
 
         assert(!res0.getName().equals(res1.getName()));
+
+        EitherF<Exception, TestModelFixtures.KhanAcademyBadge> resultE2 = networkIOContainer.resolveReferenceAsync(context);
+
+        assert(resultE2 != null);
+
+        Either<Exception, TestModelFixtures.KhanAcademyBadge> safeResult = resultE2.getOrElse((e) -> e);
+
+        assert(safeResult != null);
+        assert(safeResult.isRight());
+        assert(safeResult.getRight().getName().equals("doublepowerhourbadge"));
     }
 }
